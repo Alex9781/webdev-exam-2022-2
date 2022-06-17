@@ -1,1 +1,37 @@
 {% extends 'base.html' %}
+{% from 'pagination.html' import render_pagination %}
+
+{% block content %}
+<div class="mb-5">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Жанр(ы)</th>
+                <th>Год выхода</th>
+                <th>Средняя оценка пользователей</th>
+                <th>Количество рецензий</th>
+                <th>Дополнительно</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in books %}
+            <tr>
+            <tr>
+                <td>{{ book.title }}</td>
+                <td>Ы</td>
+                <td>{{ book.publish_year.strftime('%Y') }}</td>
+                <td>Ы</td>
+                <td>Ы</td>
+                <td>Ы (ссылки)</td>
+            </tr>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="mb-5">
+    {{ render_pagination(pagination, request.endpoint) }}
+</div>
+{% endblock %}

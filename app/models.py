@@ -1,6 +1,7 @@
 from flask_login import UserMixin
 from app import db
 import sqlalchemy
+from werkzeug.security import check_password_hash
 
 
 class User(db.Model, UserMixin):
@@ -16,6 +17,13 @@ class User(db.Model, UserMixin):
 
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'), nullable=False)
     role = db.relationship('Role')
+
+    def check_password(self, password: str):
+        return check_password_hash(self.password_hash, password)
+
+    @property
+    def full_name(self):
+        return ' '.join([self.last_name, self.first_name, self.middle_name or ''])
 
 
 class Role(db.Model):
@@ -50,6 +58,7 @@ class Genre(db.Model):
 
 
 books_genres = db.Table('books_genres',
+    db.Column('id', db.Integer, primary_key=True),
     db.Column('book_id', db.Integer, db.ForeignKey('books.id'), nullable=False),
     db.Column('genre_id', db.Integer, db.ForeignKey('genres.id'), nullable=False)
 )
@@ -81,5 +90,5 @@ class Review(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    course = db.relationship('Course')
+    book = db.relationship('Book')
     user = db.relationship('User')

@@ -16,46 +16,50 @@
 
 <body class="d-flex flex-column h-100">
     <header>
-        <nav class="navbar navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <div class="logo navbar-brand">
-                    <a href="{{ url_for('index') }}">
-                        <img class="img-fluid" src="{{ url_for('static', filename='images/polytech_logo.png') }}"
-                            alt="polytech-logo">
-                    </a>
+                <a class="navbar-brand" href="{{ url_for('index') }}">
+                    <img class="img-fluid logo" src="{{ url_for('static', filename='images/polytech_logo.png') }}"
+                        alt="polytech-logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'users' %}active{% endif %}"
+                                aria-current="page" href="">Ы</a>
+                        </li>
+                        {% if current_user.is_authenticated %}
+                        <span class="navbar-text">
+                            {{ current_user.full_name }}
+                        </span>
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{{ url_for('auth.logout') }}">Выйти</a>
+                            {% else %}
+                            <a class="nav-link {% if request.endpoint == 'auth.login' %}active{% endif %}"
+                                aria-current="page" href="{{ url_for('auth.login') }}">Войти</a>
+                            {% endif %}
+                        </li>
+                    </ul>
                 </div>
-                {% if current_user.is_authenticated %}
-                <div class="dropdown d-flex" style="width: 200px;">
-                    <div class="profile ms-auto" title="{{ current_user.full_name }}" id="dropdownMenuButton"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img class="img-fluid rounded-circle cursor-pointer"
-                            src="{{ url_for('static', filename='images/default-profile-picture-300x300.jpeg') }}"
-                            alt="profile-pic">
-                    </div>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Профиль</a>
-                        <a class="dropdown-item" href="#">Мои курсы</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выйти</a>
-                    </div>
-                </div>
-                {% else %}
-                <a class="btn btn-outline-light" href="{{ url_for('auth.login') }}">Войти</a>
-                {% endif %}
             </div>
         </nav>
-    </header>
 
-    <div class="alerts-area">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, msg in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show m-0 rounded-0" role="alert">
-            {{ msg }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="alerts-area">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, msg in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show m-0 rounded-0" role="alert">
+                {{ msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endwith %}
         </div>
-        {% endfor %}
-        {% endwith %}
-    </div>
+    </header>
 
     <main class="main flex-grow-1">
         {% block content %}
