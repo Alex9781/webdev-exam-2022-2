@@ -1,0 +1,75 @@
+{% macro render_book_form(url, genres, genres_count, book=None, book_genres=None) %}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+
+<form action="{{ url }}" method="POST" class="form-control" enctype="multipart/form-data">
+    <div class="row mb-3">
+        <label for="book_title" class="col-sm-2 col-form-label">Название</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="book_title" id="book_title" value="{{ book.title or '' }}"
+                autocomplete="off">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="book_short_description" class="col-sm-2 col-form-label">Краткое описание</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" name="book_short_description" id="book_short_description"
+                value="{{ book.short_description or '' }}"></textarea>
+            <script>
+                const easyMDE = new EasyMDE();
+            </script>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="book_author" class="col-sm-2 col-form-label">Автор</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="book_author" id="book_author" value="{{ book.author or '' }}"
+                autocomplete="off">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="book_publisher" class="col-sm-2 col-form-label">Издатель</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" name="book_publisher" id="book_publisher"
+                value="{{ book.publisher or '' }}" autocomplete="off">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="book_publish_year" class="col-sm-2 col-form-label">Год издания</label>
+        <div class="col-sm-10">
+            <input type="date" class="date-own form-control" name="book_publish_year" id="book_publish_year"
+                value="{{ book.publish_year or '' }}">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="book_volume" class="col-sm-2 col-form-label">Объём в страницах</label>
+        <div class="col-sm-10">
+            <input type="number" class="form-control" name="book_volume" id="book_volume"
+                value="{{ book.volume or '' }}" autocomplete="off">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="book_genres" class="col-sm-2 col-form-label">Жанры</label>
+        <div class="col-sm-10">
+            <select class="form-select" size="{{ genres_count }}" name="book_genres" id="book_genres" multiple>
+                {% for genre in genres %}
+                <option value="{{ genre.id }}">{{ genre.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    {% if request.endpoint == 'books.create' %}
+    <div class="mb-3">
+        <label for="book_img" class="form-label">Обложка книги</label>
+        <input class="form-control" type="file" id="book_img" name="book_img" accept=".jpg,.png">
+    </div>
+    {% endif %}
+
+    <div class="mb-3 text-center">
+        <input type="submit" class="btn btn-dark" value="Сохранить">
+    </div>
+</form>
+
+{% endmacro %}

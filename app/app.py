@@ -25,8 +25,10 @@ migrate = Migrate(app, db)
 from models import Book
 
 from auth import auth_bp, init_login_manager
+from books import book_bp
 
 app.register_blueprint(auth_bp)
+app.register_blueprint(book_bp)
 
 init_login_manager(app)
 

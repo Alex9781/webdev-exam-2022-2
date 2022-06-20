@@ -29,14 +29,22 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'users' %}active{% endif %}"
-                                aria-current="page" href="">Ы</a>
-                        </li>
-                        {% if current_user.is_authenticated %}
-                        <span class="navbar-text">
+                        <span class="navbar-text fw-bold fst-italic">
                             {{ current_user.full_name }}
                         </span>
+                        {% if current_user.is_authenticated and current_user.can('create_book') %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'books.create' %}active{% endif %}"
+                                aria-current="page" href="{{ url_for('books.create') }}">Создать книгу</a>
+                        </li>
+                        {% endif %}
+                        {% if current_user.is_authenticated and current_user.can('moderate_review') %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'users' %}active{% endif %}"
+                                aria-current="page" href="">Модерация отзывов</a>
+                        </li>
+                        {% endif %}
+                        {% if current_user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="{{ url_for('auth.logout') }}">Выйти</a>
                             {% else %}
@@ -61,7 +69,7 @@
         </div>
     </header>
 
-    <main class="main flex-grow-1">
+    <main class="main flex-grow-1 m-3">
         {% block content %}
         {% endblock %}
     </main>
@@ -73,6 +81,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
+
+    <script defer src="{{ url_for('static', filename='main.js') }}"></script>
 </body>
 
 </html>

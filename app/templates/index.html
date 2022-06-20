@@ -23,7 +23,20 @@
                 <td>{{ book.publish_year.strftime('%Y') }}</td>
                 <td>Ы</td>
                 <td>Ы</td>
-                <td>Ы (ссылки)</td>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn btn-primary" href="{{ url_for('books.show', book_id=book.id) }}">Просмотр</a>
+                        {% if current_user.is_authenticated and current_user.can('update_book') %}
+                        <a class="btn btn-secondary"
+                            href="{{ url_for('books.show', book_id=book.id) }}">Редактировать</a>
+                        {% endif %}
+                        {% if current_user.is_authenticated and current_user.can('delete_book') %}
+                        <button type="button" class="btn btn-danger"
+                            data-url="{{ url_for('books.delete', book_id=book.id) }}" data-bs-toggle="modal"
+                            data-bs-target="#delete-book-modal">Удалить</button>
+                        {% endif %}
+                    </div>
+                </td>
             </tr>
             </tr>
             {% endfor %}
@@ -33,5 +46,26 @@
 
 <div class="mb-5">
     {{ render_pagination(pagination, request.endpoint) }}
+</div>
+
+<div class="modal fade" id="delete-book-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-center">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Удаление книги</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Вы точно хотите удалить книгу <span id="book-name"></span>?
+                <form method="POST">
+                    <input id="delete-btn" type="submit" class="d-none">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+                <label for="delete-btn" class="btn btn-danger">Да</label>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
