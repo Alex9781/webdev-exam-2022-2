@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_from_directory, abort
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -22,7 +22,7 @@ metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy(app, metadata=metadata)
 migrate = Migrate(app, db)
 
-from models import Book
+from models import Book, BookImage
 
 from auth import auth_bp, init_login_manager
 from books import book_bp
@@ -43,3 +43,13 @@ def index():
     books = pagination.items
 
     return render_template('index.html', books=books, pagination=pagination)
+
+
+@app.route('/media/images/<string:image_id>')
+def image(image_id):
+    image = BookImage.query.get(image_id)
+
+    if image is None:
+        abort(404)
+
+    return send_from_directory(app.config['UPLOAD_FOLDER'], image.storage_filename)

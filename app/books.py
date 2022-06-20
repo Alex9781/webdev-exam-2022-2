@@ -15,7 +15,8 @@ book_bp = Blueprint('books', __name__, url_prefix='/books')
 @book_bp.route('/<int:book_id>')
 def show(book_id):
     book = Book.query.get(book_id)
-    return render_template('book/show.html', book=book)
+    image = BookImage.query.filter(BookImage.book_id == book_id).first()
+    return render_template('book/show.html', book=book, image=image)
 
 
 @book_bp.route('/create', methods=['GET', 'POST'])
@@ -49,7 +50,7 @@ def create():
             db.session.commit()
 
             flash('Книга успешно добавлена.', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('books.show', book_id=book.id))
         except:
             db.session.rollback()
             flash(
