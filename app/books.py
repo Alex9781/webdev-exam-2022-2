@@ -1,10 +1,12 @@
+import os
 import bleach
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required
+from sqlalchemy import true
 
-from app import db
-from models import Book, Review, Genre
+from app import db, app
+from models import Book, Review, Genre, BookImage
 from auth import check_rights
 from tools import ImageSaver
 
@@ -45,6 +47,8 @@ def create():
             if f and f.filename:
                 ImageSaver(f, book).save()
 
+            db.session.commit()
+            
             flash('Книга успешно добавлена.', 'success')
             return redirect(url_for('index'))
         except:
@@ -55,21 +59,80 @@ def create():
                 'book/create.html',
                 genres=genres,
                 genres_count=genres_count,
-                book=book,
-                book_genres=book.genres)
-        finally:
+                book=book)
+
+    return render_template(
+        'book/create.html', 
+        genres=genres, 
+        genres_count=genres_count, 
+        book=None)
+
+
+@book_bp.route('/<int:book_id>/edit', methods=['GET', 'POST'])
+def edit(book_id):
+    genres = Genre.query.all()
+    genres_count = len(genres)
+
+    book = Book.query.get(book_id)
+
+    if request.method == 'POST':
+        try:
+            book.title = bleach.clean(request.form.get('book_title'))
+            book.short_description = bleach.clean(
+                request.form.get('book_short_description'))
+            book.author = bleach.clean(request.form.get('book_author'))
+            book.publisher = bleach.clean(request.form.get('book_publisher'))
+            book.publish_year = request.form.get('book_publish_year')
+            book.volume = request.form.get('book_volume')
+
+            for genre_id in request.form.getlist('book_genres'):
+                genre = Genre.query.get(genre_id)
+                book.genres.append(genre)
+
+            db.session.add(book)
+
             db.session.commit()
 
-    return render_template('book/create.html', genres=genres, genres_count=genres_count, book=None)
+            flash('Книга успешно обновлена.', 'success')
+            return redirect(url_for('index'))
+        except:
+            db.session.rollback()
+            flash(
+                'При сохранении данных возникла ошибка. Проверьте корректность введённых данных.', 'warning')
+            return render_template(
+                'book/edit.html',
+                genres=genres,
+                genres_count=genres_count,
+                book=book, 
+                publish_year=book.publish_year.strftime('%Y-%m-%d'))
+
+    return render_template(
+        'book/edit.html', 
+        genres=genres, 
+        genres_count=genres_count, 
+        book=book, 
+        publish_year=book.publish_year.strftime('%Y-%m-%d'))
 
 
 @book_bp.route('/<int:book_id>/delete', methods=['POST'])
 @login_required
 @check_rights('delete_book')
 def delete(book_id):
-    book = Book.query.get(book_id)
-    db.session.delete(book)
-    db.session.commit()
+    try:
+        book = Book.query.get(book_id)
+        image = BookImage.query.filter(Book.id == book.id).first()
+
+        path_to_img = os.path.join(
+            app.config['UPLOAD_FOLDER'], image.storage_filename)
+
+        book.genres.clear()
+        db.session.delete(book)
+        db.session.commit()
+
+        os.remove(path_to_img)
+    except:
+        flash('Ошибка при удалении книги.', 'warning')
+        return redirect(url_for('index'))
 
     flash('Книга успешно удалена.', 'success')
     return redirect(url_for('index'))

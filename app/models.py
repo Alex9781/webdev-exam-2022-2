@@ -79,7 +79,9 @@ class Book(db.Model):
 
     volume = db.Column(db.Integer, nullable=False)
 
-    genres = db.relationship('Genre', secondary=books_genres, cascade="all,delete")
+    genres = db.relationship('Genre', secondary=books_genres, cascade="all, delete")
+    image = db.relationship('BookImage', cascade="all, delete, delete-orphan")
+    reviews = db.relationship('Review', cascade="all, delete, delete-orphan")
 
 
 class Genre(db.Model):

@@ -5,6 +5,6 @@
 
 <h1>Создание книги</h1>
 
-{{ render_book_form(url_for('books.create'), genres, genres_count, book=book, publish_year=publish_year) }}
+{{ render_book_form(url_for('books.edit', book_id=book.id), genres, genres_count, book=book, publish_year=publish_year) }}
 
 {% endblock %}

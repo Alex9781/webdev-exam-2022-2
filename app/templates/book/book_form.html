@@ -1,4 +1,4 @@
-{% macro render_book_form(url, genres, genres_count, book=None, book_genres=None) %}
+{% macro render_book_form(url, genres, genres_count, book=None, publish_year=None) %}
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
 <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
@@ -14,8 +14,9 @@
     <div class="row mb-3">
         <label for="book_short_description" class="col-sm-2 col-form-label">Краткое описание</label>
         <div class="col-sm-10">
-            <textarea class="form-control" name="book_short_description" id="book_short_description"
-                value="{{ book.short_description or '' }}"></textarea>
+            <textarea class="form-control" name="book_short_description" id="book_short_description">
+                {{ book.short_description or '' }}
+            </textarea>
             <script>
                 const easyMDE = new EasyMDE();
             </script>
@@ -39,7 +40,7 @@
         <label for="book_publish_year" class="col-sm-2 col-form-label">Год издания</label>
         <div class="col-sm-10">
             <input type="date" class="date-own form-control" name="book_publish_year" id="book_publish_year"
-                value="{{ book.publish_year or '' }}">
+                value="{{ publish_year or '' }}">
         </div>
     </div>
     <div class="row mb-3">
@@ -54,7 +55,7 @@
         <div class="col-sm-10">
             <select class="form-select" size="{{ genres_count }}" name="book_genres" id="book_genres" multiple>
                 {% for genre in genres %}
-                <option value="{{ genre.id }}">{{ genre.name }}</option>
+                <option value="{{ genre.id }}" {% if genre in book.genres %} selected {% endif %}>{{ genre.name }}</option>
                 {% endfor %}
             </select>
         </div>

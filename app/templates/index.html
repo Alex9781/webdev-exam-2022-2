@@ -18,7 +18,7 @@
             {% for book in books %}
             <tr>
             <tr>
-                <td>{{ book.title }}</td>
+                <td class="book-title">{{ book.title }}</td>
                 <td>Ы</td>
                 <td>{{ book.publish_year.strftime('%Y') }}</td>
                 <td>Ы</td>
@@ -28,7 +28,7 @@
                         <a class="btn btn-primary" href="{{ url_for('books.show', book_id=book.id) }}">Просмотр</a>
                         {% if current_user.is_authenticated and current_user.can('update_book') %}
                         <a class="btn btn-secondary"
-                            href="{{ url_for('books.show', book_id=book.id) }}">Редактировать</a>
+                            href="{{ url_for('books.edit', book_id=book.id) }}">Редактировать</a>
                         {% endif %}
                         {% if current_user.is_authenticated and current_user.can('delete_book') %}
                         <button type="button" class="btn btn-danger"
@@ -57,7 +57,7 @@
             </div>
             <div class="modal-body">
                 Вы точно хотите удалить книгу <span id="book-name"></span>?
-                <form method="POST">
+                <form action="" method="POST">
                     <input id="delete-btn" type="submit" class="d-none">
                 </form>
             </div>
