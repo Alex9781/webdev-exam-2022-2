@@ -3,7 +3,6 @@ import bleach
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
-from sqlalchemy import true
 
 from app import db, app
 from models import Book, Review, Genre, BookImage

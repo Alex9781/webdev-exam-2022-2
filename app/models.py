@@ -43,7 +43,7 @@ class User(db.Model, UserMixin):
     def is_user(self):
         return app.config.get('USER_ROLE_ID') == self.role_id
 
-    def can(self, action, book_id=None):
+    def can(self, action, book_id = None):
         user_policy = UsersPolicy(book_id)
         method = getattr(user_policy, action)
         if method is not None: return method()
@@ -87,7 +87,7 @@ class Book(db.Model):
     @property
     def score(self):
         sum = 0
-        for review in self.reviews:
+        for review in self.reviews.filter(Review.review_status_id == 2):
             sum += review.rating
 
         try:
@@ -97,7 +97,7 @@ class Book(db.Model):
 
     @property
     def reviews_count(self):
-        return len(self.reviews)
+        return len(self.reviews.filter(Review.review_status_id == 2))
 
     @property
     def formatted_description(self):
@@ -148,7 +148,7 @@ class Review(db.Model):
 
     book = db.relationship('Book')
     user = db.relationship('User')
-    review_status = db.relationship('ReviewStatus')
+    status = db.relationship('ReviewStatus')
 
     @property
     def formatted_text(self):

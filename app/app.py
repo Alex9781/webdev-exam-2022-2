@@ -26,9 +26,11 @@ from models import Book
 
 from auth import auth_bp, init_login_manager
 from books import book_bp
+from reviews import review_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(book_bp)
+app.register_blueprint(review_bp)
 
 init_login_manager(app)
 

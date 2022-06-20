@@ -27,8 +27,8 @@
                     {% endfor %}
                 </td>
                 <td>{{ book.publish_year.strftime('%Y') }}</td>
-                <td>{{ book.score }}</td>
-                <td>{{ book.reviews_count }}</td>
+                <td>{{ book.score or 0}}</td>
+                <td>{{ book.reviews_count or 0}}</td>
                 <td>
                     <div class="btn-group">
                         <a class="btn btn-primary" href="{{ url_for('books.show', book_id=book.id) }}">Просмотр</a>

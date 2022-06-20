@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h5>Имя пользователя</h5>
+        </div>
+        <div class="col col-8">
+            <h5>{{ review.user.full_name }}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5>Книга</h5>
+        </div>
+        <div class="col col-8">
+            <h5>{{ review.book.title }}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5>Оценка</h5>
+        </div>
+        <div class="col col-8">
+            <h5>{{ review.rating }}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h5>Текст отзыва</h5>
+        </div>
+        <div class="col col-8">
+            <h5>{{ review.formatted_text|safe }}</h5>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <a href="{{ url_for('reviews.approve', review_id=review.id) }}" class="btn btn-success">Одобрить</a>
+            <a href="{{ url_for('reviews.reject', review_id=review.id) }}" class="btn btn-danger">Отклонить</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

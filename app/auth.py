@@ -23,7 +23,8 @@ def check_rights(action):
     def decorator(function):
         @functools.wraps(function)
         def wrapper(*args, **kwargs):
-            if not current_user.can(action, book=kwargs.get('book_id')):
+            book_id = kwargs.get('book_id')
+            if not current_user.can(action, book_id=book_id):
                 flash('У вас недостаточно прав для доступа к данной странице.', 'danger')
                 return redirect(url_for('index'))
             return function(*args, **kwargs)

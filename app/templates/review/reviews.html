@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% from 'pagination.html' import render_pagination %}
+
+{% block content %}
+
+<h1>Модерация рецензий</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Книга</th>
+            <th>Пользователь</th>
+            <th>Дата добавления</th>
+            <th>Рассмотреть</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+        <tr>
+            <td>{{ review.book.title }}</td>
+            <td>{{ review.user.full_name }}</td>
+            <td>{{ review.created_at.strftime('%Y.%m.%d %H-%M-%S') }}</td>
+            <td><a class="btn btn-primary" href="{{ url_for('reviews.moderate_id', review_id=review.id) }}">Рассмотреть</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="mb-5">
+    {{ render_pagination(pagination, request.endpoint) }}
+</div>
+
+{% endblock %}

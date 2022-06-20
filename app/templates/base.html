@@ -43,14 +43,14 @@
                         {% endif %}
                         {% if current_user.is_authenticated and current_user.can('moderate_review') %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'users' %}active{% endif %}"
-                                aria-current="page" href="">Модерация отзывов</a>
+                            <a class="nav-link {% if request.endpoint == 'reviews.moderate' %}active{% endif %}"
+                                aria-current="page" href="{{ url_for('reviews.moderate') }}">Модерация отзывов</a>
                         </li>
                         {% endif %}
                         {% if current_user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link {% if request.endpoint == 'users' %}active{% endif %}"
-                                aria-current="page" href="">Мои отзывы</a>
+                            <a class="nav-link {% if request.endpoint == 'reviews.my_reviews' %}active{% endif %}"
+                                aria-current="page" href="{{ url_for('reviews.my_reviews') }}">Мои отзывы</a>
                         </li>
                         {% endif %}
                         {% if current_user.is_authenticated %}

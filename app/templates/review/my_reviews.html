@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Мои рецензии</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Книга</th>
+            <th>Оценка</th>
+            <th>Статус</th>
+            <th>Текст</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for review in reviews %}
+        <tr>
+            <td>{{ review.book.title }}</td>
+            <td>{{ review.rating }}</td>
+            <td>{{ review.status.status }}</td>
+            <td>{{ review.formatted_text|safe }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

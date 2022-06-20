@@ -65,11 +65,9 @@
                 {% for review in book.reviews %}
                 {% if review.allowed %}
                 <tr>
-                <tr>
                     <td>{{ review.user.first_name }} {{review.user.last_name}}</td>
                     <td>{{ review.rating }}</td>
                     <td>{{ review.formatted_text|safe }}</td>
-                </tr>
                 </tr>
                 {% endif %}
                 {% endfor %}
