@@ -4,6 +4,7 @@ import os
 from flask_login import UserMixin
 from flask import url_for
 from werkzeug.security import check_password_hash
+from markdown import markdown
 
 from app import db, app
 from user_policy import UsersPolicy
@@ -42,8 +43,8 @@ class User(db.Model, UserMixin):
     def is_user(self):
         return app.config.get('USER_ROLE_ID') == self.role_id
 
-    def can(self, action, book=None):
-        user_policy = UsersPolicy(book)
+    def can(self, action, book_id=None):
+        user_policy = UsersPolicy(book_id)
         method = getattr(user_policy, action)
         if method is not None: return method()
         else: return False
@@ -83,6 +84,24 @@ class Book(db.Model):
     image = db.relationship('BookImage', cascade="all, delete, delete-orphan")
     reviews = db.relationship('Review', cascade="all, delete, delete-orphan")
 
+    @property
+    def score(self):
+        sum = 0
+        for review in self.reviews:
+            sum += review.rating
+
+        try:
+            return sum / len(self.reviews)
+        except ZeroDivisionError:
+            return 0
+
+    @property
+    def reviews_count(self):
+        return len(self.reviews)
+
+    @property
+    def formatted_description(self):
+        return markdown(self.short_description)
 
 class Genre(db.Model):
     __tablename__ = 'genres'
@@ -125,6 +144,22 @@ class Review(db.Model):
 
     book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    review_status_id = db.Column(db.Integer, db.ForeignKey('reviews_status.id'), nullable=False, default=1)
 
     book = db.relationship('Book')
     user = db.relationship('User')
+    review_status = db.relationship('ReviewStatus')
+
+    @property
+    def formatted_text(self):
+        return markdown(self.text)
+
+    @property
+    def allowed(self):
+        return self.review_status_id == 2
+
+class ReviewStatus(db.Model):
+    __tablename__ = 'reviews_status'
+
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(100), nullable=False, unique=True)

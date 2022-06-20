@@ -2,7 +2,7 @@ import os
 import bleach
 
 from flask import Blueprint, flash, redirect, render_template, request, url_for
-from flask_login import login_required
+from flask_login import current_user, login_required
 from sqlalchemy import true
 
 from app import db, app
@@ -48,7 +48,7 @@ def create():
                 ImageSaver(f, book).save()
 
             db.session.commit()
-            
+
             flash('Книга успешно добавлена.', 'success')
             return redirect(url_for('index'))
         except:
@@ -62,9 +62,9 @@ def create():
                 book=book)
 
     return render_template(
-        'book/create.html', 
-        genres=genres, 
-        genres_count=genres_count, 
+        'book/create.html',
+        genres=genres,
+        genres_count=genres_count,
         book=None)
 
 
@@ -103,14 +103,14 @@ def edit(book_id):
                 'book/edit.html',
                 genres=genres,
                 genres_count=genres_count,
-                book=book, 
+                book=book,
                 publish_year=book.publish_year.strftime('%Y-%m-%d'))
 
     return render_template(
-        'book/edit.html', 
-        genres=genres, 
-        genres_count=genres_count, 
-        book=book, 
+        'book/edit.html',
+        genres=genres,
+        genres_count=genres_count,
+        book=book,
         publish_year=book.publish_year.strftime('%Y-%m-%d'))
 
 
@@ -136,3 +136,26 @@ def delete(book_id):
 
     flash('Книга успешно удалена.', 'success')
     return redirect(url_for('index'))
+
+
+@book_bp.route('/<int:book_id>/create_review', methods=['POST'])
+@login_required
+@check_rights('review_book')
+def create_review(book_id):
+    try:
+        review = Review()
+        review.rating = request.form.get('review-rating')
+        review.text = bleach.clean(request.form.get('review-text'))
+        review.book_id = book_id
+        review.user_id = current_user.id
+
+        db.session.add(review)
+        db.session.commit()
+
+        flash('Рецензия отправлена на проверку.', 'success')
+        return redirect(url_for('books.show', book_id=book_id))
+    except:
+        db.session.rollback()
+        flash('При создании рецензии возникла ошибка. Проверьте корректность введённых данных.', 'warning')
+        return redirect(url_for('books.show', book_id=book_id))
+    

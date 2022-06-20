@@ -2,8 +2,8 @@ from flask_login import current_user
 
 
 class UsersPolicy:
-    def __init__(self, book=None):
-        self.book = book
+    def __init__(self, book_id=None):
+        self.book_id = book_id
 
     def create_book(self):
         is_create_user = current_user.is_admin
@@ -25,10 +25,10 @@ class UsersPolicy:
         is_moderating_review_user = current_user.is_admin or current_user.is_moderator
         return is_moderating_review_user
 
-    def review(self):
+    def review_book(self):
         from models import Review
         
         is_reviewing_user = Review.query.filter(
-            Review.book_id == self.book.id).filter(
+            Review.book_id == self.book_id).filter(
                 Review.user_id == current_user.id).first() is None and current_user.is_authenticated
         return is_reviewing_user
