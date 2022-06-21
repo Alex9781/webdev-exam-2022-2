@@ -120,16 +120,18 @@ def edit(book_id):
 def delete(book_id):
     try:
         book = Book.query.get(book_id)
-        image = BookImage.query.filter(Book.id == book.id).first()
+        image = BookImage.query.filter(BookImage.book_id == book_id).first()
 
-        path_to_img = os.path.join(
-            app.config['UPLOAD_FOLDER'], image.storage_filename)
+        if image:
+            path_to_img = os.path.join(
+                app.config['UPLOAD_FOLDER'], image.storage_filename)
 
         book.genres.clear()
         db.session.delete(book)
         db.session.commit()
 
-        os.remove(path_to_img)
+        if image:
+            os.remove(path_to_img)
     except:
         flash('Ошибка при удалении книги.', 'warning')
         return redirect(url_for('index'))
