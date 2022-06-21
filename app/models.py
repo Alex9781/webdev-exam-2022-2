@@ -87,17 +87,20 @@ class Book(db.Model):
     @property
     def score(self):
         sum = 0
-        for review in self.reviews.filter(Review.review_status_id == 2):
+        reviews = Review.query.filter(Review.review_status_id == 2).filter(Review.book_id == self.id).all()
+
+        for review in reviews:
             sum += review.rating
 
         try:
             return sum / len(self.reviews)
         except ZeroDivisionError:
-            return 0
+            return 0.0
 
     @property
     def reviews_count(self):
-        return len(self.reviews.filter(Review.review_status_id == 2))
+        reviews = Review.query.filter(Review.review_status_id == 2).filter(Review.book_id == self.id).all()
+        return len(reviews)
 
     @property
     def formatted_description(self):
