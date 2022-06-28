@@ -75,7 +75,7 @@
         </table>
     </section>
     <section class="leave_review">
-        {% if current_user.can('review_book', book_id=book.id) %}
+        {% if current_user.is_authenticated and current_user.can('review_book', book_id=book.id) %}
         <h3>Оставить рецензию</h3>
         <form class="mb-5 mt-3 row align-items-center" method="post"
             action="{{ url_for('books.create_review', book_id = book.id) }}">
