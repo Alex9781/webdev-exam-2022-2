@@ -69,6 +69,8 @@ def create():
 
 
 @book_bp.route('/<int:book_id>/edit', methods=['GET', 'POST'])
+@login_required
+@check_rights('edit_book')
 def edit(book_id):
     genres = Genre.query.all()
     genres_count = len(genres)
